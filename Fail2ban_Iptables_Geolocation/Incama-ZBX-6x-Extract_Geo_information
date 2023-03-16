@@ -1,0 +1,267 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 92f62d31dc8041bc9925d4821745d3ab
+      template: Incama-ZBX-6x-Extract_Geo_Information
+      name: Incama-ZBX-6x-Extract_Geo_Information
+      description: 'This templates is automaticly attached to the new created host extracting geolocation of the ip address found in the Iptables list.'
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: 0e6a7a8c892f421da46070ca04bc7bec
+          name: City
+          type: DEPENDENT
+          key: extract.city
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          inventory_link: SITE_CITY
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.city
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: city
+        -
+          uuid: 47576170f55e42d68ec21280cc9b3792
+          name: Continent
+          type: DEPENDENT
+          key: extract.continent
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.continent
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: continent
+        -
+          uuid: 629e5a377c834d2f85b0945e4a16ba22
+          name: Country
+          type: DEPENDENT
+          key: extract.country
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          inventory_link: SITE_COUNTRY
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.country
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: country
+        -
+          uuid: e77fd43bf11e461caa9094dc8d901ed7
+          name: 'Country Code'
+          type: DEPENDENT
+          key: extract.country.code
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.country_code
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: 'country code'
+        -
+          uuid: 0013890174ee4ff18f008c144d8a78e9
+          name: 'Internet Service Provide'
+          type: DEPENDENT
+          key: extract.isp
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.connection.isp
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: 'connection info'
+              value: isp
+        -
+          uuid: 627e3bf8d4164fa7aaa19764df86d70c
+          name: 'Internet Service Provide Domain'
+          type: DEPENDENT
+          key: extract.isp.domain
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.connection.domain
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: 'connection info'
+              value: 'isp domain'
+        -
+          uuid: 862e82fe5a2f475f97216ad0597db126
+          name: latitude
+          type: DEPENDENT
+          key: extract.latitude.simple
+          delay: '0'
+          value_type: FLOAT
+          inventory_link: LOCATION_LAT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.latitude
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: latitude
+        -
+          uuid: 79e80368d353438facb7c60082b88351
+          name: longitude
+          type: DEPENDENT
+          key: extract.longitude.simple
+          delay: '0'
+          value_type: FLOAT
+          inventory_link: LOCATION_LON
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.longitude
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: longitude
+        -
+          uuid: 639f64323d37454498cef098835f47fc
+          name: Region
+          type: DEPENDENT
+          key: extract.region
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          inventory_link: SITE_STATE
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.region
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: region
+        -
+          uuid: 5c168577b5e0474f941c450acdd8c20a
+          name: 'Region Code'
+          type: DEPENDENT
+          key: extract.region.code
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.region_code
+          master_item:
+            key: get.raw.ip.geo.data
+          tags:
+            -
+              tag: location
+              value: 'region code'
+        -
+          uuid: 9340c23d102c4f118a2f21f13f2448cf
+          name: 'Get the raw Ip Data'
+          type: HTTP_AGENT
+          key: get.raw.ip.geo.data
+          delay: 1d
+          trends: '0'
+          value_type: TEXT
+          timeout: 10s
+          url: 'https://ipwho.is/{HOST.CONN}'
+          tags:
+            -
+              tag: data
+              value: raw
+      dashboards:
+        -
+          uuid: 3a6fe8ae9cc04de7a8e66a0b541b5f30
+          name: 'Location Info'
+          pages:
+            -
+              widgets:
+                -
+                  type: plaintext
+                  width: '24'
+                  height: '5'
+                  fields:
+                    -
+                      type: INTEGER
+                      name: show_lines
+                      value: '8'
+                    -
+                      type: INTEGER
+                      name: show_as_html
+                      value: '1'
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        host: Incama-ZBX-6x-Extract_Geo_Information
+                        key: extract.city
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        host: Incama-ZBX-6x-Extract_Geo_Information
+                        key: extract.country
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        host: Incama-ZBX-6x-Extract_Geo_Information
+                        key: extract.longitude.simple
+                    -
+                      type: ITEM
+                      name: itemids
+                      value:
+                        host: Incama-ZBX-6x-Extract_Geo_Information
+                        key: extract.region
