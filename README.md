@@ -1,0 +1,1 @@
+# -Zabbix-Templates-6.x-Http-Agent
